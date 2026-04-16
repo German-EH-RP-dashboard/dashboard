@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>RP Player Search</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #0f0f0f;
+    color: white;
+    text-align: center;
+    padding: 30px;
+}
+
+input {
+    width: 300px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: #1c1c1c;
+    padding: 15px;
+    margin: 10px auto;
+    width: 350px;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.bad {
+    color: red;
+}
+
+.good {
+    color: lime;
+}
+</style>
+
+</head>
+<body>
+
+<h1>🔎 RP Spieler Suche</h1>
+
+<input id="search" placeholder="Username oder UserID eingeben...">
+
+<div id="results"></div>
+
+<script>
+let players = [];
+
+fetch("DEIN_GITHUB_LINK")
+.then(res => res.json())
+.then(data => {
+    players = data.players;
+});
+
+document.getElementById("search").addEventListener("input", function() {
+    let value = this.value.toLowerCase();
+    let output = "";
+
+    players.forEach(p => {
+        if (
+            p.username.toLowerCase().includes(value) ||
+            String(p.userId).includes(value)
+        ) {
+            output += `
+            <div class="card">
+                <h3>${p.displayName} (${p.username})</h3>
+                <p><b>UserID:</b> ${p.userId}</p>
+                <p><b>Rank:</b> ${p.rank}</p>
+                <p><b>Wanted Level:</b> ${p.wantedLevel}</p>
+                <p><b>Ban:</b> <span class="${p.hasBan ? 'bad' : 'good'}">${p.hasBan}</span></p>
+                <p><b>RP Violation:</b> <span class="${p.rpViolation ? 'bad' : 'good'}">${p.rpViolation}</span></p>
+                <p><b>Actions:</b> Robbed: ${p.actions.robbed}, Hostage: ${p.actions.hostageTaken}</p>
+                <p>${p.info}</p>
+            </div>
+            `;
+        }
+    });
+
+    document.getElementById("results").innerHTML = output || "<p>Kein Spieler gefunden</p>";
+});
+</script>
+
+</body>
+</html>
